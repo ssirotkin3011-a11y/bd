@@ -1,0 +1,54 @@
+Table artists {
+  id integer [primary key]
+  name varchar
+}
+
+Table genres {
+  id integer [primary key]
+  name varchar
+}
+
+Table artist_genres {
+  artist_id integer
+  genre_id integer
+}
+
+Table albums {
+  id integer [primary key]
+  title varchar
+  year integer
+}
+
+Table artist_albums {
+  artist_id integer
+  album_id integer
+}
+
+Table tracks {
+  id integer [primary key]
+  title varchar
+  duration integer
+  album_id integer
+}
+
+Table collections {
+  id integer [primary key]
+  title varchar
+  year integer
+}
+
+Table collection_tracks {
+  collection_id integer
+  track_id integer
+}
+
+Ref: artist_genres.artist_id > artists.id
+Ref: artist_genres.genre_id > genres.id
+
+Ref: artist_albums.artist_id > artists.id
+Ref: artist_albums.album_id > albums.id
+
+Ref: tracks.album_id > albums.id
+
+Ref: collection_tracks.collection_id > collections.id
+Ref: collection_tracks.track_id > tracks.id
