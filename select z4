@@ -1,0 +1,43 @@
+1. Альбомы, где есть исполнители более чем одного жанра
+
+SELECT DISTINCT a.title
+FROM albums a
+JOIN artist_albums aa ON a.id = aa.album_id
+JOIN artist_genres ag ON aa.artist_id = ag.artist_id
+GROUP BY a.id, a.title
+HAVING COUNT(DISTINCT ag.genre_id) > 1;
+
+2. Треки, которые НЕ входят в сборники
+
+SELECT t.title
+FROM tracks t
+LEFT JOIN collection_tracks ct ON t.id = ct.track_id
+WHERE ct.track_id IS NULL;
+
+💡 Если вдруг пусто — просто не добавляй один трек в collection_tracks.
+
+3. Исполнители, написавшие самый короткий трек
+
+SELECT DISTINCT ar.name
+FROM artists ar
+JOIN artist_albums aa ON ar.id = aa.artist_id
+JOIN albums a ON aa.album_id = a.id
+JOIN tracks t ON a.id = t.album_id
+WHERE t.duration = (
+    SELECT MIN(duration)
+    FROM tracks
+);
+
+4. Альбомы с наименьшим количеством треков
+
+SELECT a.title
+FROM albums a
+JOIN tracks t ON a.id = t.album_id
+GROUP BY a.id, a.title
+HAVING COUNT(t.id) = (
+    SELECT COUNT(t2.id)
+    FROM tracks t2
+    GROUP BY t2.album_id
+    ORDER BY COUNT(t2.id)
+    LIMIT 1
+);
