@@ -1,0 +1,52 @@
+1. Количество исполнителей в каждом жанре
+
+SELECT g.name, COUNT(ag.artist_id) AS artist_count
+FROM genres g
+LEFT JOIN artist_genres ag ON g.id = ag.genre_id
+GROUP BY g.name;
+
+2. Количество треков в альбомах 2019–2020 годов
+
+SELECT COUNT(t.id) AS track_count
+FROM tracks t
+JOIN albums a ON t.album_id = a.id
+WHERE a.year BETWEEN 2019 AND 2020;
+
+💡 Если у тебя нет таких альбомов — добавь:
+
+INSERT INTO albums (id, title, year) VALUES (4, 'Future Sound', 2020);
+
+INSERT INTO tracks (id, title, duration, album_id) VALUES
+(8, 'New Wave', 210, 4),
+(9, 'Skyline', 200, 4);
+
+3. Средняя продолжительность треков по каждому альбому
+
+SELECT a.title, AVG(t.duration) AS avg_duration
+FROM albums a
+JOIN tracks t ON a.id = t.album_id
+GROUP BY a.title;
+
+4. Исполнители, которые НЕ выпускали альбомы в 2020 году
+SELECT name
+
+FROM artists
+WHERE id NOT IN (
+    SELECT aa.artist_id
+    FROM artist_albums aa
+    JOIN albums a ON aa.album_id = a.id
+    WHERE a.year = 2020
+);
+
+5. Сборники, в которых есть конкретный исполнитель
+
+(пример: Imagine Dragons)
+
+SELECT DISTINCT c.title
+FROM collections c
+JOIN collection_tracks ct ON c.id = ct.collection_id
+JOIN tracks t ON ct.track_id = t.id
+JOIN albums a ON t.album_id = a.id
+JOIN artist_albums aa ON a.id = aa.album_id
+JOIN artists ar ON aa.artist_id = ar.id
+WHERE ar.name = 'Imagine Dragons';
